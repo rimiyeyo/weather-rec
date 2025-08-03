@@ -12,7 +12,6 @@ def test_get_openai_client() -> None:
     assert client.api_key == settings.openai_api_key
 
 
-# @pytest.mark.skip
 @pytest.mark.parametrize(
     "query, expected",
     [

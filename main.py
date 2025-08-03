@@ -60,6 +60,30 @@ def get_weater_data_from_kma(
     return STATUS_OF_SKY[found["fcstValue"]]
 
 
-if __name__ == "__main__":
+def get_result_food_and_travel_rec_info(
+    llm_client: OpenAI,
+    weather_condition: str,
+    local_name: str,
+) -> str:
+    prompt = f"현재 날씨는 {weather_condition}인데 날씨에 어울리는 {local_name}지역에서의 음식과 날씨에 어울리는 {local_name}지역의 여행정보 추천해줘."
+    response = llm_client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=1000,
+    )
+    return response.choices[0].message.content.strip()
+
+
+def test_scenario() -> str:
+    query = "서울의 음식정보와 여행정보 추천해줘."
+    llm_client = get_openai_client()
+    local_name = get_region_name_keyword_extract(llm_client, query)
     weather_condition = get_weater_data_from_kma("0500")
-    print(weather_condition)
+    result = get_result_food_and_travel_rec_info(
+        llm_client, weather_condition, local_name
+    )
+    return print(result)
+
+
+if __name__ == "__main__":
+    test_scenario()
